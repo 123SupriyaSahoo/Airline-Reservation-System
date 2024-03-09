@@ -1,0 +1,163 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+
+struct passenger_details
+{
+	char passport[6];
+	char name[15];
+    char destination[15];
+	int seat_num;
+	char email[15];
+	struct passenger_details *next;
+};
+
+struct passenger_details *begin, *input_details, *temp;
+
+void reserve(int x), cancel(), display(), details();  //function prototypes
+
+void main()
+{
+	int choice;
+	begin = input_details = NULL;  //initialize the struct pointers to NULL 
+	int num = 1;
+	do
+	{
+		
+		printf("\n\n\t\t************************");
+		printf("\n\t\t                   Welcome to INDIGO airline system                   ");
+		printf("\n\t\t************************");
+		printf("\n\n\n\t\t Please enter your choice from below (1-4):");
+		printf("\n\n\t\t 1. Reservation");
+		printf("\n\n\t\t 2. Cancel");
+		printf("\n\n\t\t 3. DISPLAY RECORDS");
+		printf("\n\n\t\t 4. EXIT");
+		printf("\n\n\n\t\t Enter your choice : ");
+
+
+
+		scanf("%d", &choice); fflush(stdin);
+		switch (choice)
+		{
+		case 1:
+			reserve(num);
+			num++;
+			break;
+		case 2:
+			cancel();
+			break;
+		case 3:
+			display();
+			break;
+		case 4:
+		{
+				  break;
+		}
+		default:
+			printf("\n\n\t SORRY INVALID CHOICE!");
+			printf("\n\n\t PLEASE CHOOSE FROM 1-4");
+			printf("\n\n\t Do not forget to chose from 1-4");
+		}
+	} while (choice != 4);
+}
+
+void details()
+{
+	printf("\n\t Enter your passport number:");
+	gets(input_details->passport); fflush(stdin);   //reads a line from stdin and stores it into the string pointed
+	printf("\n\t Enter your  name:");
+	gets(input_details->name); fflush(stdin);
+	printf("\n\t Enter your email address:");
+	gets(input_details->email); fflush(stdin);
+    printf("\n\t Enter the Destination : ");
+    gets(input_details->destination); fflush(stdin);
+}
+
+
+void reserve(int x)
+{
+	input_details = begin;
+	if (begin == NULL)
+	{
+		// first user
+		begin = input_details = (struct passenger_details*)malloc(sizeof(struct passenger_details));
+		details();
+		input_details->next = NULL;
+		printf("\n\t Seat booking successful!");
+		printf("\n\t your seat number is: Seat A-%d", x);
+		input_details->seat_num = x;
+		return;
+	}
+	else if (x > 15) // FULL SEATS
+	{
+		printf("\n\t\t Seat Full.");
+		return;
+	}
+	else
+	{
+		// next user
+		while (input_details->next)
+			input_details = input_details->next;
+		input_details->next = (struct passenger_details *)malloc(sizeof(struct passenger_details));
+		input_details = input_details->next;
+		details();
+		input_details->next = NULL;
+		printf("\n\t Seat booking succesful!");
+		printf("\n\t your seat number is: Seat A-%d", x);
+		input_details->seat_num = x;
+		return;
+	}
+} 
+
+void display()
+{
+	input_details = begin;
+	if(input_details==NULL){
+			printf("\n\t\t No records found!!\n");
+		}
+	while (input_details)
+	{
+		printf("\n\n===================================================================");
+		printf("\n\n\t\tPassport Number : %-6s", input_details->passport);
+		printf("\n\t\tname : %-15s", input_details->name);
+		printf("\n\t\temail address: %-15s", input_details->email);
+		printf("\n\t\tSeat number: A-%d", input_details->seat_num);
+        printf("\n\t\tDestination:%-15s", input_details->destination);
+		printf("\n\n===================================================================");
+		input_details = input_details->next;
+	}
+
+}
+
+void cancel()
+{
+	input_details = begin;
+	char passport[6];
+	printf("\n\n Enter passort number to delete record?:");
+	gets(passport); fflush(stdin);
+	if (strcmp(begin->passport, passport) == 0)
+	{
+		temp = begin;
+		begin = begin->next;
+		free(temp);
+		printf(" booking has been deleted");
+		return;
+
+	}
+
+	while (input_details->next)
+	{
+		if (strcmp(input_details->next->passport, passport) == 0)
+		{
+			temp = input_details->next;
+			input_details->next = input_details->next->next;
+			free(temp);
+			printf("has been deleted ");
+			return;
+		}
+		input_details = input_details->next;
+	}
+	printf("passport number is wrong please check your passport");
+
+}
